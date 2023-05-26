@@ -61,20 +61,26 @@ class MainActivity : AppCompatActivity() {
 
         btnView.setOnClickListener {
             //use cursor to select all the users
-            var cursor = db.rawQuery("SELECT * FROM users, null")
+            var cursor = db.rawQuery("SELECT * FROM users", null)
             //check if there's any record in the db
-            var buffer = toString()
-            while (cursor.moveToNext()){
-                var retrieverName = cursor.getString(0)
-                var retriverEmail = cursor.getstring(1)
-                var retrieverIdNumber = cursor.getString(2)
-                buffer.append(retrieverName+"\n")
-                buffer.append(retriverEmail+"\n")
-                buffer.append(retrieverIdNumber+"\n")
+            if (cursor.count == 0) {
+                displayUsers("NO RECORDS", "Sorry, no data")
+            } else {
+
+                //use string buffer to append records from the db
+                var buffer = StringBuffer()
+                while (cursor.moveToNext()) {
+                    var retrievedName = cursor.getString(0)
+                    var retrievedEmail = cursor.getString(1)
+                    var retrievedIdNumber = cursor.getString(2)
+                    buffer.append(retrievedName+"\n")
+                    buffer.append(retrievedEmail+"\n")
+                    buffer.append(retrievedIdNumber+"\n")
+                }
+                displayUsers("USERS", buffer.toString())
+
             }
-
         }
-
         btnDelete.setOnClickListener {
             //Receive the id of the user to be delete
             var idNumber = edtIdnumber.text.toString()
@@ -102,7 +108,7 @@ class MainActivity : AppCompatActivity() {
     fun displayUsers(title:String, message:String){
         var alertDialog = AlertDialog.Builder(this)
         alertDialog.setTitle(title)
-        alertDialog.setPositiveButton(message)
+        alertDialog.setMessage(message)
         alertDialog.setPositiveButton("close", null)
         alertDialog.create().show()
 
